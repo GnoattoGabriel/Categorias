@@ -4,6 +4,7 @@ package com.gnoatto.Categorias.controllers;
 import com.gnoatto.Categorias.models.CategoriaModel;
 import com.gnoatto.Categorias.services.CategoriaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,28 +19,33 @@ public class CategoriaController {
 
 
     @PostMapping
-    public CategoriaModel criarCategoria(@RequestBody CategoriaModel novaCategoria){
-        return categoriaService.criarCategoria(novaCategoria);
+    public ResponseEntity<CategoriaModel> criarCategoria(@RequestBody CategoriaModel novaCategoria){
+        CategoriaModel categoria = categoriaService.criarCategoria(novaCategoria);
+        return ResponseEntity.status(201).body(categoria);
     }
 
     @GetMapping
-    public List<CategoriaModel> buscarTodos(){
-        return categoriaService.listarTodos();
+    public ResponseEntity<List<CategoriaModel>> buscarTodos(){
+        return ResponseEntity.ok(categoriaService.listarTodos());
     }
 
     @DeleteMapping("/{id}")
-    public void deletarCategoria(@PathVariable Long id){
+    public ResponseEntity<?> deletarCategoria(@PathVariable Long id){
         categoriaService.deletarCategoria(id);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}")
-    public Optional<CategoriaModel> buscarPorId(@PathVariable Long id){
-        return categoriaService.buscarPorId(id);
+    public ResponseEntity<CategoriaModel> buscarPorId(@PathVariable Long id){
+        return categoriaService.buscarPorId(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PutMapping("/{id}")
-    public CategoriaModel atualizarCategoria(@PathVariable Long id,@RequestBody CategoriaModel novaCategoria){
-        return categoriaService.atualizarCategoria(id, novaCategoria);
+    public ResponseEntity<CategoriaModel> atualizarCategoria(@PathVariable Long id,@RequestBody CategoriaModel novaCategoria){
+        CategoriaModel categoria = categoriaService.atualizarCategoria(id, novaCategoria);
+        return ResponseEntity.ok(categoria);
     }
 
 
